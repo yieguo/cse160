@@ -102,7 +102,9 @@ class Vector3 {
       */
     static dot(other1, other2) {
         // Insert your code here.
-        let d = 0; // Modify this line to calculate this vector's magnitude.
+        let d = other1.elements[0] * other2.elements[0] +
+        other1.elements[1] * other2.elements[1] +
+        other1.elements[2] * other2.elements[2]; // Modify this line to calculate this vector's magnitude.
 
         // Don't delete the return statement.
         return d;
@@ -115,10 +117,15 @@ class Vector3 {
     static cross(other1, other2) {
         // Insert your code here.
         // This function should create and return a new vector.
-        let v3 = new Vector3(); // Modify this line to calculate cross product between other1 and other2.
-
+        let a = other1.elements;
+        let b = other2.elements;
+        return new Vector3([
+          a[1] * b[2] - a[2] * b[1],
+          a[2] * b[0] - a[0] * b[2],
+          a[0] * b[1] - a[1] * b[0]
+        ]);
         // Don't delete the return statement.
-        return v3;
+        // return v3;
     }
 
     /**
@@ -126,23 +133,25 @@ class Vector3 {
       * @return scalar
       */
     magnitude() {
-        // Insert your code here.
-        let m = 0; // Modify this line to calculate this vector's magnitude.
-
-        // Don't delete the return statement.
-        return m;
+      // Insert your code here.
+      var e = this.elements;
+      return Math.sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
     };
 
-    /**
-      * Normalize this vector.
-      * @return this
-      */
+  /**
+    * Normalize this vector.
+    * @return this
+    */
     normalize() {
-        // Insert your code here.
-        // This function should change this vector (this.elements) and not create a new vector.
-
-        // Don't delete the return statement.
-        return this;
+      // Insert your code here.
+      // This function should change this vector (this.elements) and not create a new vector.
+      var mag = this.magnitude();
+      if (mag === 0) return this;  // Avoid divide-by-zero.
+      for (var i = 0; i < 3; i++) {
+        this.elements[i] /= mag;
+      }
+      // Don't delete the return statement.
+      return this;
     };
 }
 
