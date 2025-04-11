@@ -12,7 +12,6 @@
 
     <br><br>
 
-    <!-- Input elements for x and y coordinates -->
     <label for="xCoord"><strong>V1: x</strong></label>
     <input type="number" id="xCoord" value="" step="0.01">
     <label for="yCoord"><strong>y</strong></label>
@@ -20,18 +19,15 @@
 
     <br>
 
-    <!-- Inputs for v2: -->
     <label for="x2Coord"><strong>V2: x</strong></label>
     <input type="number" id="x2Coord" value="" step="0.01">
     <label for="y2Coord"><strong>y</strong></label>
     <input type="number" id="y2Coord" value="" step="0.01">
     <br><br>
-     <!-- A button that simply draws v1 and v2 (from your previous operation) -->
      <button onclick="handleDrawEvent()">Draw Vectors</button>
      <br><br>
      <hr>
      <h3>Perform Vector Arithmetic</h3>
-     <!-- Operation selector -->
      <label for="opSelect"><strong>Operation</strong></label>
      <select id="opSelect">
        <option value="add">add</option>
@@ -44,17 +40,13 @@
        <option value="area">Area</option>
      </select>
  
-     <!-- Scalar input (used for mul and div operations) -->
      <label for="scalar"><strong>Scalar</strong></label>
      <input type="number" id="scalar" value="2.0" step="0.01">
      <br><br>
-     <!-- Button to perform the arithmetic operation -->
      <button onclick="handleDrawOperationEvent()">Perform Operation</button>
  
-     <!-- Include the cuon-matrix library first -->
      <script src="../lib/cuon-matrix-cse160.js"></script>
      <!-- <script src="../lib/cuon-matrix.js"></script> -->
-     <!-- Then include your asg0.js -->
      <script src="asg0.js"></script>
    </body>
  </html>
