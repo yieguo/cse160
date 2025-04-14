@@ -12,12 +12,15 @@ var FSHADER_SOURCE =
   '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
   '}\n';
 
+
+
+var gl;
 function main() {
   // Retrieve <canvas> element
   var canvas = document.getElementById('webgl');
 
   // Get the rendering context for WebGL
-  var gl = getWebGLContext(canvas);
+  gl = getWebGLContext(canvas);
   if (!gl) {
     console.log('Failed to get the rendering context for WebGL');
     return;
@@ -30,11 +33,11 @@ function main() {
   }
 
   // Write the positions of vertices to a vertex shader
-  var n = initVertexBuffers(gl);
-  if (n < 0) {
-    console.log('Failed to set the positions of the vertices');
-    return;
-  }
+  // var n = initVertexBuffers(gl);
+  // if (n < 0) {
+  //   console.log('Failed to set the positions of the vertices');
+  //   return;
+  // }
 
   // Specify the color for clearing <canvas>
   gl.clearColor(0, 0, 0, 1);
@@ -43,13 +46,16 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // Draw the rectangle
-  gl.drawArrays(gl.TRIANGLES, 0, n);
+  drawTriangle([0,0.5,    -0.5,-0.5,    0.5,-0.5]);
+  drawTriangle([0.8,0.9,    0.7,0.8,    0.8,0.7]);
+  drawTriangle([0.0,0.0,    0.5,0,    0.5,0.5]);
+  // gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
-function initVertexBuffers(gl) {
-  var vertices = new Float32Array([
-    0, 0.5,   -0.5, -0.5,   0.5, -0.5
-  ]);
+function drawTriangle(vertices) {
+  // var vertices = new Float32Array([
+  //   0, 0.5,   -0.5, -0.5,   0.5, -0.5
+  // ]);
   var n = 3; // The number of vertices
 
   // Create a buffer object
@@ -62,7 +68,8 @@ function initVertexBuffers(gl) {
   // Bind the buffer object to target
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   // Write date into the buffer object
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  //  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
   var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
   if (a_Position < 0) {
@@ -75,5 +82,6 @@ function initVertexBuffers(gl) {
   // Enable the assignment to a_Position variable
   gl.enableVertexAttribArray(a_Position);
 
-  return n;
+  // return n;
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 }
