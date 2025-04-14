@@ -67,15 +67,32 @@ function connectVariablesToGLSL(){
 const POINT = 0;
 const TRIANGLE = 1;
 const CIRCLE = 2;
+const GENERATION_DELAY = 50;
 let g_selectedColor = [1.0,1.0,1.0,1.0];
 let g_SelectedSize=5;
 let g_slectedType=POINT;
 let g_segments=10;
+var g_shapesList = [];
 
 function addActionsForHtmlUI(){
   document.getElementById('green').onclick = function() {g_selectedColor = [0.0,1.0,0.0,1.0];};
   document.getElementById('red').onclick = function() {g_selectedColor = [1.0,0.,0.0,1.0];};
-  document.getElementById('clearButton').onclick = function() {g_shapesList = []; renderAllShapes();};
+  document.getElementById('clearButton').onclick = function() {
+    g_shapesList = []; 
+    renderAllShapes(); 
+  }
+  document.getElementById('recurseButton').onclick = function() {
+    g_shapesList = []; // Clear current shapes
+    recurseStructs.generate(
+        g_shapesList,           
+        g_slectedType,          
+        g_selectedColor.slice(),
+        g_SelectedSize,         
+        g_segments,             
+        100                     
+    );
+    renderAllShapes();
+  }
 
   document.getElementById('pointButton').onclick = function() {g_slectedType=POINT};
   document.getElementById('triButton').onclick = function() {g_slectedType=TRIANGLE};
@@ -85,8 +102,8 @@ function addActionsForHtmlUI(){
   document.getElementById('greenSlide').addEventListener('mouseup', function() {g_selectedColor[1] = this.value/100; });
   document.getElementById('blueSlide').addEventListener('mouseup', function() {g_selectedColor[2] = this.value/100; });
 
-  document.getElementById('sizeSlide').addEventListener('mouseup', function() {g_SelectedSize = this.value; });
-  document.getElementById('segSlide').addEventListener('mouseup', function() {g_segments = this.value; });
+  document.getElementById('sizeSlide').addEventListener('mouseup', function() {g_SelectedSize = parseFloat(this.value); });
+  document.getElementById('segSlide').addEventListener('mouseup', function() {g_segments = parseInt(this.value); });
 
 }
 
@@ -95,11 +112,27 @@ function main() {
 
   connectVariablesToGLSL();
 
-  // Register function (event handler) to be called on a mouse press
-  canvas.onmousedown = click;
-  canvas.onmousemove = function(ev) {if(ev.buttons == 1) {click(ev)}};
-
   addActionsForHtmlUI();
+
+  // Register function (event handler) to be called on a mouse press
+  // canvas.onmousedown = click;
+  // canvas.onmousemove = function(ev) {if(ev.buttons == 1) {click(ev)}};
+  canvas.onmousedown = function(ev) {
+    // Prevent drawing while recursion is happening
+    if (!recurseStructs.generationInProgress) {
+        click(ev);
+    } else {
+        console.log("Generation in progress, click ignored.");
+    }
+  }
+  canvas.onmousemove = function(ev) {
+      // Prevent drawing while recursion is happening
+      if (ev.buttons === 1 && !recurseStructs.generationInProgress) {
+          click(ev);
+      }
+  }
+
+  // addActionsForHtmlUI();
 
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
