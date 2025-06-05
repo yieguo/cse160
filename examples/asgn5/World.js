@@ -1,4 +1,3 @@
-// World.js
 import * as THREE from "three";
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
@@ -18,27 +17,43 @@ const velocity  = new THREE.Vector3();
 const direction = new THREE.Vector3();
 let prevTime    = performance.now();
 
+let diceTexture;
+
 function makeRandomShape() {
   const type = Math.floor(Math.random() * 3);
   const size = 0.5 + Math.random() * 2.5;
+
   let geometry;
   switch (type) {
-    case 0:
+    case 0: // cube
       geometry = new THREE.BoxGeometry(size, size, size);
       break;
-    case 1:
+    case 1: // sphere
       geometry = new THREE.SphereGeometry(size / 2, 16, 16);
       break;
-    case 2:
+    case 2: // tetrahedron
       geometry = new THREE.TetrahedronGeometry(size);
       break;
   }
-  const color = Math.random() * 0xffffff;
-  const material = new THREE.MeshPhongMaterial({ color });
+
+  let material;
+  if (type === 0) {
+    if (Math.random() < 0.5) {
+      material = new THREE.MeshPhongMaterial({ map: diceTexture });
+    } else {
+      const color = Math.random() * 0xffffff;
+      material = new THREE.MeshPhongMaterial({ color });
+    }
+  } else {
+    const color = Math.random() * 0xffffff;
+    material = new THREE.MeshPhongMaterial({ color });
+  }
+
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.x = (Math.random() * 60) - 30;
   mesh.position.y = 1 + Math.random() * 29;
   mesh.position.z = (Math.random() * 60) - 30;
+
   scene.add(mesh);
   generatedShapes.push(mesh);
 }
@@ -54,6 +69,9 @@ function sendTextToHTML(text, htmlID) {
 function main() {
   scene = new THREE.Scene();
 
+  const globalLoader = new THREE.TextureLoader();
+  diceTexture = globalLoader.load("dancy.jpg");
+
   const loader     = new THREE.TextureLoader();
   const skyTexture = loader.load("sky.jpg");
   const skySize    = 1000;
@@ -65,6 +83,7 @@ function main() {
   const skyBox = new THREE.Mesh(skyGeo, skyMat);
   scene.add(skyBox);
 
+  // Ground
   const groundGeo  = new THREE.BoxGeometry(50, 1, 50);
   const groundMat  = new THREE.MeshPhongMaterial({ color: 0x228b22 });
   const ground     = new THREE.Mesh(groundGeo, groundMat);
@@ -72,6 +91,7 @@ function main() {
   ground.receiveShadow = true;
   scene.add(ground);
 
+  // Camera
   camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -80,11 +100,13 @@ function main() {
   );
   camera.position.set(0, 5, 50);
 
+  // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
   document.body.appendChild(renderer.domElement);
 
+  // PointerLockControls
   controls = new PointerLockControls(camera, renderer.domElement);
   scene.add(controls.object);
   renderer.domElement.addEventListener("click", () => {
@@ -99,6 +121,7 @@ function main() {
     console.log("Pointer unlocked. Click on canvas to resume.");
   });
 
+  // Keyboard events
   const onKeyDown = (event) => {
     switch (event.code) {
       case "ArrowUp":
@@ -171,7 +194,6 @@ function main() {
   const initialIntensity = parseFloat(slider.value);
   directionalLight.intensity = initialIntensity;
   lightSphere.scale.set(initialIntensity, initialIntensity, initialIntensity);
-
   slider.addEventListener("input", (e) => {
     const val = parseFloat(e.target.value);
     directionalLight.intensity = val;
@@ -190,7 +212,6 @@ function main() {
   const btnDir  = document.getElementById("toggleDir");
   const btnAmb  = document.getElementById("toggleAmb");
   const btnHemi = document.getElementById("toggleHemi");
-
   btnDir.addEventListener("click", () => {
     directionalLight.visible = !directionalLight.visible;
   });
@@ -208,7 +229,6 @@ function main() {
   mtlLoader.setPath("./");
   mtlLoader.load("Lowpoly_tree_sample.mtl", (mtl) => {
     mtl.preload();
-
     const objLoader = new OBJLoader();
     objLoader.setMaterials(mtl);
     objLoader.setPath("./");
@@ -231,7 +251,6 @@ function main() {
   const inputCount   = document.getElementById("cubeCount");
   const btnGenerate  = document.getElementById("generateCubes");
   const btnClear     = document.getElementById("clearCubes");
-
   btnGenerate.addEventListener("click", () => {
     const n = parseInt(inputCount.value);
     if (!n || n < 1) return;
@@ -239,7 +258,6 @@ function main() {
       makeRandomShape();
     }
   });
-
   btnClear.addEventListener("click", () => {
     generatedShapes.forEach((mesh) => {
       scene.remove(mesh);
@@ -285,16 +303,16 @@ function main() {
       controls.moveRight(-velocity.x * delta);
       controls.moveForward(-velocity.z * delta);
 
-      const riseSpeed = 4.0;
+      const riseSpeed = 8.0;
       if (spaceDown) {
-        controls.object.position.y += riseSpeed * delta * 2;
+        controls.object.position.y += riseSpeed * delta;
       }
       if (shiftDown) {
-        controls.object.position.y -= riseSpeed * delta * 2;
+        controls.object.position.y -= riseSpeed * delta;
       }
 
-      if (controls.object.position.y < 0.1) {
-        controls.object.position.y = 0.1;
+      if (controls.object.position.y < 2) {
+        controls.object.position.y = 2;
       }
     }
 
