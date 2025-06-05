@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  Name: Eddy Guo
+  email: yieguo@ucsc.edu
+  <br>
+  First click to lock in, ESC to unlock. WASD to move, Space to increase camera height, shift to decrease height.
+  <head>
+    <meta charset="utf-8" />
+    <title>crazy land</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+
+  <body onload="main()">
+    <div>
+    <button id="toggleDir">Toggle Directional Light</button>
+    <button id="toggleAmb">Toggle Ambient Light</button>
+    <button id="toggleHemi">Toggle Hemisphere Light</button>
+
+    <input
+      type="number"
+      id="cubeCount"
+      min="1"
+      placeholder="Number of shapes"
+      style="width: 120px;"
+    />
+    <button id="generateCubes">Generate</button>
+    <button id="clearCubes">Clear</button>
+
+    <br>
+    <label for="intensitySlider">Light Intensity:</label>
+    <input
+      type="range"
+      id="intensitySlider"
+      min="0"
+      max="5"
+      step="0.1"
+      value="3"
+    />
+
+    <p id="numdot"> XXX </p> 
+    </div>
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <!-- <script src="../lib/cuon-matrix.js"></script> -->
+
+    <script src="../lib/cuon-matrix-cse160.js"></script>
+
+    <script type="module" src="World.js"></script>
+  </body>
+</html>
